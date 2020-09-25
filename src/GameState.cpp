@@ -76,7 +76,7 @@ void GameState::Init()
     _shuffleSprite.setPosition(500,5);
 
     InitGridPieces();
-    int n=0;
+
 
 
 }
@@ -227,13 +227,17 @@ void GameState::InitGridPieces()
         for (int y = 0;y< 4;y++)
 
         {
-            do
+            if(x==3&&y==3) {num=0;}
+            else
+            {do
             {num =(rand()%16);}
-            while(checkExistance(num)==true);//choisir un entier aleatoire a condition qu'il n'est pas dans grid
+            while(checkExistance(num)==true|| num==0);}//choisir un entier aleatoire a condition qu'il n'est pas dans grid
             grid[x][y]=num;
-            _gridPieces[x][y].setTexture(this->_data->assets.GetTexture(std::to_string(num)));//affecter la texture
+            grid1[x][y]=num;
+            if (num!=0)
+            {_gridPieces[x][y].setTexture(this->_data->assets.GetTexture(std::to_string(num)));//affecter la texture
             _gridPieces[x][y].setPosition(88 + (tempSpriteSize.x * x) -7, 274 + (tempSpriteSize.y * y) - 7);//mettre a sa position
-            _gridPieces[x][y].setColor(sf::Color(255, 255, 255, 255));
+            _gridPieces[x][y].setColor(sf::Color(255, 255, 255, 255));}
             n++;
 
             /*if (n==1)
@@ -336,7 +340,9 @@ void GameState::InitGridPieces()
         for (int y = 0; y < 4; y++)
         {
             std::cout<<grid[y][x]<<"  ";
+
         }
+
         std::cout<<std::endl;
 
     }
@@ -388,21 +394,30 @@ void GameState::CheckAndSwipPiece()
     int w=147;
     float speed=3;
     std::cout<<"dx = "<<dx<<" dy= "<<dy<<std::endl;
+    for (int i=0 ; i<4;i++)
+    {
+        for(int j=0; j<4; j++)
+        {
+            if (grid1[i][j]==n)
+            {pos1=i;pos2=j;}
+        }
+    }
+
 
     for (int i=0; i<w; i+=speed)
     {
-        _gridPieces[column][row].move(speed*dx,speed*dy);
+        _gridPieces[pos1][pos2].move(speed*dx,speed*dy);
+        //_gridPieces[pos1+dx][pos2+dy].move(-speed*dx,-speed*dy);
         if((dx!=0)||(dy!=0))
         {sound.play();}
-        this->_data->window.draw(this->_gridPieces[column][row]);
-        this->_data->window.draw(this->_gridPieces[column+dx][row+dy]);
+        this->_data->window.draw(this->_gridPieces[pos1][pos2]);
+       // this->_data->window.draw(this->_gridPieces[pos1+dx][pos2+dy]);
         this->_data->window.display();
     }
-   /* _gridPieces[column][row]=a16;
-    _gridPieces[column+dx][row+dy]=a;*/
+
     if(this->checkwin()==true)
     {
-        this->_data->machine.AddState(StateRef (new GameOverState(_data,name)),true);
+        this->_data->machine.AddState(StateRef (new GameOverState(_data,name,ii)),true);
     }
 
 
